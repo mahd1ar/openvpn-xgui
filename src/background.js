@@ -4,6 +4,8 @@ import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import { spawn } from "child_process";
+import { mkdirSync, existsSync } from "fs";
+import path from "path";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -15,12 +17,13 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 435,
+    height: 650,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      enableRemoteModule: true
     }
   });
 
@@ -97,3 +100,10 @@ ipcMain.on("send_command", (event, arg) => {
     console.log(`child process exited with code ${code}`);
   });
 });
+
+// check local file directory exists or not
+let localpath = path.join(app.getPath("appData"), "ovpn-xgui");
+
+global.globals = { appLocalPath: localpath };
+
+if (!existsSync(localpath)) mkdirSync(localpath);

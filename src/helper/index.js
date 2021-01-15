@@ -1,6 +1,7 @@
+import { ipcRenderer } from "electron";
 const { spawn } = require("child_process");
 
-class commandRunner {
+export class commandRunner {
   constructor() {
     this.stack = [];
     this.resultStack = [];
@@ -71,16 +72,30 @@ class commandRunner {
   }
 }
 
-let r = new commandRunner();
+// how to use command runner:
 
-// r.run(['ls', '/']).run(['pwd']).run(['find', '/home', '-name', '"*.ovpn"']).done()
+// let r = new commandRunner();
 
-r.run(["ls", "/"])
-  .run(["pwd"])
-  .run(["ping", "4.4.4.4", "-c", "1"])
-  .done()
-  .then(e => {
-    e.forEach(i => {
-      console.log(i.data.toString());
+// r.run(["ls", "/"])
+//   .run(["pwd"])
+//   .run(["ping", "4.4.4.4", "-c", "1"])
+//   .done()
+//   .then(e => {
+//     e.forEach(i => {
+//       console.log(i.data.toString());
+//     });
+//   });
+
+export function exec(args) {
+  return new Promise((resolve, reject) => {
+    ipcRenderer.send("send_command", args); // prints "pong"
+
+    ipcRenderer.on("reply_command", (event, arg) => {
+      resolve(arg);
+    });
+
+    ipcRenderer.on("error_command", (event, arg) => {
+      reject(arg);
     });
   });
+}

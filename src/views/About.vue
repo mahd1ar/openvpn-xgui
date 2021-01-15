@@ -1,38 +1,23 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
-    <pre>
-      {{ ls }}
+    <h1>LOG</h1>
+    <div class="bg-gray-700 text-white text-left">
+      <router-link to="/"> &lt;- home</router-link>
+    </div>
+    <pre class="w-full whitespace-pre-wrap">
+      {{ logger }}
     </pre>
   </div>
 </template>
 
 <script>
-import { ipcRenderer } from "electron";
-
-function exec(args) {
-  return new Promise((resolve, reject) => {
-    ipcRenderer.send("send_command", args); // prints "pong"
-
-    ipcRenderer.on("reply_command", (event, arg) => {
-      resolve(arg);
-    });
-
-    ipcRenderer.on("error_command", (event, arg) => {
-      reject(arg);
-    });
-  });
-}
-
-// window.ipcRenderer = ipcRenderer
+import { mapState } from "vuex";
 export default {
   data() {
-    return {
-      ls: "ss"
-    };
+    return {};
   },
-  async mounted() {
-    this.ls = await exec(["ls", "-lh", "/usr"]);
+  computed: {
+    ...mapState(["logger"])
   }
 };
 </script>

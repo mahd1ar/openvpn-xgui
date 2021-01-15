@@ -3,5 +3,9 @@ module.exports = {
     electronBuilder: {
       nodeIntegration: true
     }
+  },
+
+  css: {
+    sourceMap: true
   }
 };
